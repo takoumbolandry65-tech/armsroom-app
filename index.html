@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Arms Room</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #1e1e2f;
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            width: 300px;
+            margin: auto;
+            margin-top: 50px;
+            background: #2c2c3e;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        input, select {
+            width: 90%;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        button {
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        canvas {
+            background: white;
+            border-radius: 5px;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+    <h2> Weapon Sign-Out</h2>
+
+    <input id="name" placeholder="Name">
+    <input id="rank" placeholder="Rank">
+  
+
+    <input id="weapon" placeholder="Weapon Serial">
+
+    <select id="action">
+        <option value="OUT">Check-Out</option>
+        <option value="IN">Return</option>
+    </select>
+
+    <p>Signature:</p>
+    <canvas id="signature" width="250" height="120"></canvas><br>
+
+    <button onclick="clearSig()">Clear</button>
+    <button onclick="submitForm()">Submit</button>
+</div>
+
+<script>
+let canvas = document.getElementById("signature");
+let ctx = canvas.getContext("2d");
+let drawing = false;
+
+canvas.addEventListener("mousedown", () => drawing = true);
+canvas.addEventListener("mouseup", () => drawing = false);
+canvas.addEventListener("mousemove", draw);
+
+function draw(e){
+    if(!drawing) return;
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+}
+
+function clearSig(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function submitForm(){
+    const data = {
+        name: document.getElementById("name").value,
+        rank: document.getElementById("rank").value,
+        weapon: document.getElementById("weapon").value,
+        action: document.getElementById("action").value,
+        timestamp: new Date().toLocaleString(),
+        signature: canvas.toDataURL()
+    };
+
+    fetch("http://localhost:3000/api/request", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.error){
+            alert(data.error);
+        } else {
+            alert("Submitted successfully");
+        }
+    });
+}
+
+</script>
+
+</body>
+</html>

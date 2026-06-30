@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Armorer Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #1e1e2f;
+            color: white;
+            text-align: center;
+        }
+
+        .card {
+            background: #2c2c3e;
+            padding: 15px;
+            margin: 10px auto;
+            width: 300px;
+            border-radius: 10px;
+        }
+
+        button {
+            padding: 8px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .approve {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .refresh {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .status-out {
+            color: red;
+        }
+
+        .status-in {
+            color: lightgreen;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>🪖 Armorer Dashboard</h2>
+
+<button class="refresh" onclick="loadData()">Load Requests</button>
+<button class="refresh" onclick="loadWeaponStatus()">Weapon Status</button>
+<button onclick="window.print()">Print</button>
+
+<div id="data"></div>
+
+<script>
+function loadData(){
+    fetch("http://localhost:3000/api/requests")
+    .then(res => res.json())
+    .then(data => {
+        let html = "";
+
+        data.forEach(item => {
+            html += `
+                <div class="card">
+                    <b>${item.name}</b> (${item.rank})<br>
+                    Weapon: ${item.weapon}<br>
+                    Action: ${item.action}<br>
+                    Time: ${item.timestamp}<br>
+                    Status: ${item.status}<br>
+                    <img src="${item.signature}" width="200"><br>
+
+                    <button class="approve" onclick="approve('${item._id}')">Approve</button>
+                </div>
+            `;
+        });
+
+        document.getElementById("data").innerHTML = html;
+    });
+}
+
+function approve(id){
+    fetch("http://localhost:3000/api/approve/" + id, {
+        method: "PUT"
+    }).then(() => loadData());
+}
+
+function loadWeaponStatus(){
+    fetch("http://localhost:3000/api/weapons/status")
+    .then(res => res.json())
+    .then(data => {
+        let html = "<h3>Weapon Status</h3>";
+
+        for(let weapon in data){
+            let status = data[weapon];
+
+            if(status === "OUT"){
+                html += `<div class="status-out">🔴 ${weapon} - OUT</div>`;
+            } else {
+                html += `<div class="status-in">🟢 ${weapon} - IN</div>`;
+            }
+        }
+
+        document.getElementById("data").innerHTML = html;
+    });
+}
+</script>
+
+</body>
+</html>
