@@ -10,7 +10,6 @@ app.use(cors());
 mongoose.connect("mongodb+srv://takoumbolandry65_db_user:1234@cluster0.70cqnhp.mongodb.net/armsroom?retryWrites=true&w=majority")
 .then(() => console.log("MongoDB Connected"))
 .catch(err => console.log(err));
-
 // CREATE MODEL
 const Transaction = mongoose.model("Transaction", {
     name: String,

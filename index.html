@@ -101,7 +101,7 @@ function submitForm(){
         signature: canvas.toDataURL()
     };
 
-    fetch("http://localhost:3000/api/request", {
+    fetch("https://YOUR-RENDER-URL/api/request", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(data)
