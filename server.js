@@ -7,7 +7,7 @@ app.use(express.json());
 app.use(cors());
 
 // CONNECT TO DATABASE
-mongoose.connect("mongodb://127.0.0.1:27017/armsroom")
+mongoose.connect("mongodb+srv://takoumbolandry65_db_user:1234@cluster0.70cqnhp.mongodb.net/armsroom?retryWrites=true&w=majority")
 .then(() => console.log("MongoDB Connected"))
 .catch(err => console.log(err));
 
